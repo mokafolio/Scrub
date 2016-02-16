@@ -46,6 +46,18 @@ namespace scrub
         }
 
         template<>
+        inline stick::Float32 convert<stick::Float32>(const stick::String & _str)
+        {
+            return stick::toFloat32(_str);
+        }
+
+        template<>
+        inline stick::Float64 convert<stick::Float64>(const stick::String & _str)
+        {
+            return stick::toFloat64(_str);
+        }
+
+        template<>
         inline stick::Int32 convert<stick::Int32>(const stick::String & _str)
         {
             return stick::toInt32(_str);
@@ -193,6 +205,10 @@ namespace scrub
     STICK_API ShrubResult parseJSON(const stick::String & _json, stick::Allocator & _alloc = stick::defaultAllocator());
     STICK_API ShrubResult loadJSON(const stick::URI & _path, stick::Allocator & _alloc = stick::defaultAllocator());
     STICK_API TextResult exportJSON(const Shrub & _shrub, bool _bPrettify = false);
+
+    STICK_API ShrubResult parseXML(const stick::String & _xml, stick::Allocator & _alloc = stick::defaultAllocator());
+    STICK_API ShrubResult loadXML(const stick::URI & _path, stick::Allocator & _alloc = stick::defaultAllocator());
+    STICK_API TextResult exportXML(const Shrub & _shrub, bool _bPrettify = false);
 }
 
 #endif //SCRUB_SHRUB_HPP

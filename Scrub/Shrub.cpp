@@ -1,5 +1,6 @@
 #include <Stick/FileUtilities.hpp>
 #include <Scrub/JSON/JSONSerializer.hpp>
+#include <Scrub/XML/XMLSerializer.hpp>
 #include <algorithm> //for std::sort
 
 namespace scrub
@@ -232,5 +233,20 @@ namespace scrub
     TextResult exportJSON(const Shrub & _shrub, bool _bPrettify)
     {
         return json::exportJSON(_shrub, _bPrettify);
+    }
+
+    ShrubResult parseXML(const String & _xml, Allocator & _alloc)
+    {
+        return xml::parseXML(_xml, _alloc);
+    }
+
+    ShrubResult loadXML(const URI & _path, Allocator & _alloc)
+    {
+
+    }
+
+    TextResult exportXML(const Shrub & _shrub, bool _bPrettify)
+    {
+        return xml::exportXML(_shrub, _bPrettify);
     }
 }

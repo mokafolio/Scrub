@@ -59,7 +59,7 @@ const Suite spec[] =
         EXPECT(tree.child("plug-ins").ensure().count() == 3);
         String expected[3] = {"python", "c++", "ruby"};
         Size i = 0;
-        for(const auto & child : tree.child("plug-ins").ensure())
+        for (const auto & child : tree.child("plug-ins").ensure())
         {
             EXPECT(child.value() == expected[i]);
             ++i;
@@ -70,6 +70,36 @@ const Suite spec[] =
         auto failTreeResult = parseJSON(failJSON);
         EXPECT(failTreeResult == false);
         EXPECT(failTreeResult.error() == ec::ParseFailed);
+    },
+    SUITE("Parse XML Tests")
+    {
+        String testXML =
+            "<debug version = '1.3'>\n"
+            "<filename>debug.log</filename>\n"
+            "<modules>\n"
+            "<module>Finance</module>\n"
+            "<module>Admin</module>\n"
+            "<module>HR</module>\n"
+            "</modules>\n"
+            "<level>2</level>\n"
+            "</debug>\n";
+
+        String invalidXML =
+            "<start>";
+
+        Shrub tree = parseXML(testXML).ensure();
+        EXPECT(tree.count() == 4);
+        EXPECT(tree.get<Float32>("version").ensure() == 1.3f);
+        EXPECT(tree.get<const String &>("filename").ensure() == "debug.log");
+        EXPECT(tree.child("modules").ensure().count() == 3);
+        String expected[3] = {"Finance", "Admin", "HR"};
+        Size i = 0;
+        for(const auto & child : tree.child("modules").ensure())
+        {
+            EXPECT(child.value() == expected[i]);
+            ++i;
+        }
+        EXPECT(tree.get<Int32>("level").ensure() == 2);
     }
 };
 

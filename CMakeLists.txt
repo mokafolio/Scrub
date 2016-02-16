@@ -9,11 +9,17 @@ set (SCRUBDEPS Stick)
 set (SCRUBINC 
 Scrub/Shrub.hpp
 Scrub/JSON/JSONSerializer.hpp
+Scrub/JSON/sajson.hpp
+Scrub/XML/XMLSerializer.hpp
+Scrub/XML/pugiconfig.hpp
+Scrub/XML/pugixml.hpp
 )
 
 set (SCRUBSRC 
 Scrub/Shrub.cpp
 Scrub/JSON/JSONSerializer.cpp
+Scrub/XML/XMLSerializer.cpp
+Scrub/XML/pugixml.cpp
 )
 
 add_library (Scrub SHARED ${SCRUBSRC})
