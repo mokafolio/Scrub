@@ -187,9 +187,12 @@ namespace scrub
 
     STICK_RESULT_HOLDER(ShrubResultHolder, shrub);
     typedef stick::Result<Shrub, ShrubResultHolder> ShrubResult;
+    STICK_RESULT_HOLDER(TextResultHolder, text);
+    typedef stick::Result<stick::String, TextResultHolder> TextResult;
 
     STICK_API ShrubResult parseJSON(const stick::String & _json, stick::Allocator & _alloc = stick::defaultAllocator());
     STICK_API ShrubResult loadJSON(const stick::URI & _path, stick::Allocator & _alloc = stick::defaultAllocator());
+    STICK_API TextResult exportJSON(const Shrub & _shrub, bool _bPrettify = false);
 }
 
 #endif //SCRUB_SHRUB_HPP

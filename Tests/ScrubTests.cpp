@@ -67,7 +67,6 @@ const Suite spec[] =
         EXPECT(tree.child("indent").ensure().count() == 2);
         EXPECT(tree.get<Int32>("indent.length").ensure() == 3);
         EXPECT(tree.get<bool>("indent.use_space").ensure() == true);
-
         auto failTreeResult = parseJSON(failJSON);
         EXPECT(failTreeResult == false);
         EXPECT(failTreeResult.error() == ec::ParseFailed);

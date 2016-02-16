@@ -10,6 +10,7 @@ namespace scrub
         using namespace stick;
 
         STICK_LOCAL ShrubResult parseJSON(const String & _json, Allocator & _alloc);
+        STICK_LOCAL TextResult exportJSON(const Shrub & _shrub, bool _bPrettify);
     }
 }
 

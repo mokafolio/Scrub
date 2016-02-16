@@ -228,4 +228,9 @@ namespace scrub
         }
         return result.error();
     }
+
+    TextResult exportJSON(const Shrub & _shrub, bool _bPrettify)
+    {
+        return json::exportJSON(_shrub, _bPrettify);
+    }
 }
