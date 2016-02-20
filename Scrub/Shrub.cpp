@@ -10,22 +10,25 @@ namespace scrub
     Shrub::Shrub(Allocator & _allocator) :
         m_name(_allocator),
         m_value(_allocator),
+        m_valueHint(ValueHint::None),
         m_children(_allocator)
     {
 
     }
 
-    Shrub::Shrub(const String & _name, Allocator & _allocator) :
+    Shrub::Shrub(const String & _name, ValueHint _hint, Allocator & _allocator) :
         m_name(_name),
         m_value(_allocator),
+        m_valueHint(_hint),
         m_children(_allocator)
     {
 
     }
 
-    Shrub::Shrub(const String & _name, const String & _value, Allocator & _allocator) :
+    Shrub::Shrub(const String & _name, const String & _value, ValueHint _hint, Allocator & _allocator) :
         m_name(_name),
         m_value(_value),
+        m_valueHint(_hint),
         m_children(_allocator)
     {
 
@@ -59,6 +62,12 @@ namespace scrub
         return *this;
     }
 
+    Shrub & Shrub::setValueHint(ValueHint _hint)
+    {
+        m_valueHint = _hint;
+        return *this;
+    }
+
     Shrub & Shrub::set(const String & _path, const char * _val, char _separator)
     {
         auto it = ensureTree(_path, _separator);
@@ -69,7 +78,7 @@ namespace scrub
     Shrub & Shrub::append(const String & _path, const char * _val, char _separator)
     {
         auto it = ensureTree(_path, _separator);
-        it->m_children.append(Shrub(String("", m_children.allocator()) , String(_val, m_children.allocator()), m_children.allocator()));
+        it->m_children.append(Shrub(String("", m_children.allocator()), String(_val, m_children.allocator()), ValueHint::None, m_children.allocator()));
         return *this;
     }
 
@@ -120,7 +129,7 @@ namespace scrub
             auto it = ret->findByName(segments[segment]);
             if (it == ret->m_children.end())
             {
-                ret->m_children.append(Shrub(segments[segment], const_cast<Allocator &>(m_children.allocator())));
+                ret->m_children.append(Shrub(segments[segment], ValueHint::None, const_cast<Allocator &>(m_children.allocator())));
                 it = ret->m_children.begin() + ret->m_children.count() - 1;
                 ret = &(*it);
             }
@@ -152,6 +161,11 @@ namespace scrub
     const String & Shrub::name() const
     {
         return m_name;
+    }
+
+    ValueHint Shrub::valueHint() const
+    {
+        return m_valueHint;
     }
 
     Shrub & Shrub::sort()

@@ -56,7 +56,9 @@ const Suite spec[] =
         Shrub tree = parseJSON(testJSON).ensure();
         EXPECT(tree.count() == 3);
         EXPECT(tree.child("encoding").ensure().value() == "UTF-8");
+        EXPECT(tree.child("encoding").ensure().valueHint() == ValueHint::JSONString);
         EXPECT(tree.child("plug-ins").ensure().count() == 3);
+        EXPECT(tree.child("plug-ins").ensure().valueHint() == ValueHint::JSONArray);
         String expected[3] = {"python", "c++", "ruby"};
         Size i = 0;
         for (const auto & child : tree.child("plug-ins").ensure())
@@ -66,6 +68,7 @@ const Suite spec[] =
         }
         EXPECT(tree.child("indent").ensure().count() == 2);
         EXPECT(tree.get<Int32>("indent.length").ensure() == 3);
+        EXPECT(tree.child("indent.length").ensure().valueHint() == ValueHint::JSONInt);
         EXPECT(tree.get<bool>("indent.use_space").ensure() == true);
         auto failTreeResult = parseJSON(failJSON);
         EXPECT(failTreeResult == false);
@@ -89,8 +92,9 @@ const Suite spec[] =
 
         Shrub tree = parseXML(testXML).ensure();
         EXPECT(tree.count() == 4);
-        EXPECT(tree.get<Float32>("version").ensure() == 1.3f);
+        //EXPECT(tree.get<Float32>("version").ensure() == 1.3f);
         EXPECT(tree.get<const String &>("filename").ensure() == "debug.log");
+        EXPECT(tree.child("filename").ensure().count() == 0);
         EXPECT(tree.child("modules").ensure().count() == 3);
         String expected[3] = {"Finance", "Admin", "HR"};
         Size i = 0;
@@ -100,6 +104,10 @@ const Suite spec[] =
             ++i;
         }
         EXPECT(tree.get<Int32>("level").ensure() == 2);
+
+        auto broken = parseXML(invalidXML);
+        EXPECT(broken == false);
+        EXPECT(broken.error() == ec::ParseFailed);
     }
 };
 

@@ -5,37 +5,52 @@ namespace scrub
 {
     namespace json
     {
-        static String JSONValueToString(const sajson::value & _val, Allocator & _alloc)
+        struct JSONValue
+        {
+            String value;
+            ValueHint hint;
+        };
+
+        static JSONValue JSONValueToString(const sajson::value & _val, Allocator & _alloc)
         {
             if (_val.get_type() == sajson::TYPE_STRING)
             {
-                return String(_val.as_string().c_str(), _alloc);
+                return {String(_val.as_string().c_str(), _alloc), ValueHint::JSONString};
             }
             else if (_val.get_type() == sajson::TYPE_TRUE)
             {
-                return String("true", _alloc);
+                return {String("true", _alloc), ValueHint::JSONBool};
             }
             else if (_val.get_type() == sajson::TYPE_FALSE)
             {
-                return String("false", _alloc);
+                return {String("false", _alloc), ValueHint::JSONBool};
             }
             else if (_val.get_type() == sajson::TYPE_INTEGER)
             {
-                return toString(_val.get_integer_value(), _alloc);
+                return {toString(_val.get_integer_value(), _alloc), ValueHint::JSONInt};
             }
             else if (_val.get_type() == sajson::TYPE_DOUBLE)
             {
-                return toString(_val.get_double_value(), _alloc);
+                return {toString(_val.get_double_value(), _alloc), ValueHint::JSONDouble};
+            }
+            else if (_val.get_type() == sajson::TYPE_OBJECT)
+            {
+                return {String("", _alloc), ValueHint::JSONObject};
+            }
+            else if (_val.get_type() == sajson::TYPE_ARRAY)
+            {
+                return {String("", _alloc), ValueHint::JSONArray};
             }
 
-            return String("", _alloc);
+            return {String("", _alloc), ValueHint::None};
         }
 
         static void parseJSONObject(const sajson::value & _node, Shrub & _treeNode);
 
         static void parseJSONNode(const String & _name, const sajson::value & _node, Shrub & _treeNode)
         {
-            Shrub child(_name, JSONValueToString(_node, _treeNode.allocator()), _treeNode.allocator());
+            auto val = JSONValueToString(_node, _treeNode.allocator());
+            Shrub child(_name, val.value, val.hint, _treeNode.allocator());
             if (_node.get_type() == sajson::TYPE_OBJECT)
             {
                 parseJSONObject(_node, child);
@@ -76,6 +91,9 @@ namespace scrub
 
         static bool isObject(const Shrub & _child)
         {
+            if(_child.valueHint() == ValueHint::JSONObject)
+                return true;
+
             for (const auto & child : _child)
             {
                 if (child.name().length())
@@ -102,7 +120,7 @@ namespace scrub
                 {
                     if (!_bIsPartOfArray)
                     {
-                        _out.append("\"", _child.name(), "\" : [");
+                        _out.append(AppendVariadicFlag(), "\"", _child.name(), "\" : [");
                         if (_bPrettify) _out.append("\n");
                     }
                     else
@@ -128,7 +146,7 @@ namespace scrub
                 else
                 {
                     if (!_bIsPartOfArray)
-                        _out.append("\"", _child.name(), "\" : {");
+                        _out.append(AppendVariadicFlag(), "\"", _child.name(), "\" : {");
                     else
                         _out.append("{");
                     if (_bPrettify) _out.append("\n");
@@ -141,7 +159,7 @@ namespace scrub
 
                     if (_bPrettify)
                         indent(_out, _indentation);
-                    
+
                     if (!_bIsLastChild)
                         _out.append("},");
                     else
@@ -151,10 +169,20 @@ namespace scrub
             }
             else
             {
-                if (!_bIsPartOfArray)
-                    _out.append("\"", _child.name(), "\" : \"", _child.value(), "\"");
+                if (_child.valueHint() == ValueHint::None || _child.valueHint() == ValueHint::JSONString)
+                {
+                    if (!_bIsPartOfArray)
+                        _out.append(AppendVariadicFlag(), "\"", _child.name(), "\" : \"", _child.value(), "\"");
+                    else
+                        _out.append(AppendVariadicFlag(), "\"", _child.value(), "\"");
+                }
                 else
-                    _out.append("\"", _child.value(), "\"");
+                {
+                    if (!_bIsPartOfArray)
+                        _out.append(AppendVariadicFlag(), "\"", _child.name(), "\" : ", _child.value());
+                    else
+                        _out.append(_child.value());
+                }
                 if (!_bIsLastChild)
                     _out.append(",");
                 if (_bPrettify) _out.append("\n");

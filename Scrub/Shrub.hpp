@@ -17,9 +17,8 @@ namespace scrub
     //hints for serializing
     enum class STICK_API ValueHint
     {
-        Auto = 0,
+        None,
         JSONInt,
-        JSONUInt,
         JSONBool,
         JSONString,
         JSONDouble,
@@ -95,9 +94,9 @@ namespace scrub
 
         Shrub(stick::Allocator & _allocator = stick::defaultAllocator());
 
-        Shrub(const stick::String & _name, stick::Allocator & _allocator = stick::defaultAllocator());
+        Shrub(const stick::String & _name, ValueHint _hint = ValueHint::None, stick::Allocator & _allocator = stick::defaultAllocator());
 
-        Shrub(const stick::String & _name, const stick::String & _value, stick::Allocator & _allocator = stick::defaultAllocator());
+        Shrub(const stick::String & _name, const stick::String & _value, ValueHint _hint = ValueHint::None, stick::Allocator & _allocator = stick::defaultAllocator());
 
         /*Shrub(const Shrub & _other);
 
@@ -129,6 +128,8 @@ namespace scrub
 
         Shrub & setValue(const stick::String & _value);
 
+        Shrub & setValueHint(ValueHint _hint);
+
         template<class T>
         Shrub & set(const stick::String & _path, T _val, char _separator = '.')
         {
@@ -143,7 +144,7 @@ namespace scrub
         Shrub & append(const stick::String & _path, T _val, char _separator = '.')
         {
             auto it = ensureTree(_path, _separator);
-            it->m_children.append(Shrub(stick::String("", m_children.allocator()), stick::toString(_val, m_children.allocator()), m_children.allocator()));
+            it->m_children.append(Shrub(stick::String("", m_children.allocator()), stick::toString(_val, m_children.allocator()), ValueHint::None, m_children.allocator()));
             return *this;
         }
 
@@ -156,6 +157,8 @@ namespace scrub
         const stick::String & value() const;
 
         const stick::String & name() const;
+
+        ValueHint valueHint() const;
 
         Shrub & sort();
 
@@ -194,6 +197,7 @@ namespace scrub
 
         stick::String m_name;
         stick::String m_value;
+        ValueHint m_valueHint;
         ChildArray m_children;
     };
 
