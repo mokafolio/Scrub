@@ -12,6 +12,8 @@
 #include <Stick/URI.hpp>
 #include <Stick/Result.hpp>
 
+#include <type_traits>
+
 namespace scrub
 {
     //hints for serializing
@@ -79,6 +81,78 @@ namespace scrub
         {
             return stick::toUInt64(_str);
         }
+
+        template<class T>
+        inline ValueHint deduceHint()
+        {
+            return ValueHint::None;
+        }
+
+        template<>
+        inline ValueHint deduceHint<stick::UInt8>()
+        {
+            return ValueHint::JSONInt;
+        }
+
+        template<>
+        inline ValueHint deduceHint<stick::Int8>()
+        {
+            return ValueHint::JSONInt;
+        }
+
+        template<>
+        inline ValueHint deduceHint<stick::UInt16>()
+        {
+            return ValueHint::JSONInt;
+        }
+
+        template<>
+        inline ValueHint deduceHint<stick::Int16>()
+        {
+            return ValueHint::JSONInt;
+        }
+
+        template<>
+        inline ValueHint deduceHint<stick::UInt32>()
+        {
+            return ValueHint::JSONInt;
+        }
+
+        template<>
+        inline ValueHint deduceHint<stick::Int32>()
+        {
+            return ValueHint::JSONInt;
+        }
+
+        template<>
+        inline ValueHint deduceHint<stick::UInt64>()
+        {
+            return ValueHint::JSONInt;
+        }
+
+        template<>
+        inline ValueHint deduceHint<stick::Int64>()
+        {
+            return ValueHint::JSONInt;
+        }
+
+        template<>
+        inline ValueHint deduceHint<stick::Float32>()
+        {
+            return ValueHint::JSONDouble;
+        }
+
+        template<>
+        inline ValueHint deduceHint<stick::Float64>()
+        {
+            return ValueHint::JSONDouble;
+        }
+
+        template<>
+        inline ValueHint deduceHint<stick::String>()
+        {
+            return ValueHint::JSONString;
+        }
     }
 
     class STICK_API Shrub
@@ -133,8 +207,15 @@ namespace scrub
         template<class T>
         Shrub & set(const stick::String & _path, T _val, char _separator = '.')
         {
+            return set(_path, _val, detail::deduceHint<std::remove_cv<T>::type>(), _separator);
+        }
+
+        template<class T>
+        Shrub & set(const stick::String & _path, T _val, ValueHint _hint, char _separator = '.')
+        {
             auto it = ensureTree(_path, _separator);
             it->m_value = stick::toString(_val, m_children.allocator());
+            it->m_valueHint = _hint;
             return *this;
         }
 
@@ -143,8 +224,14 @@ namespace scrub
         template<class T>
         Shrub & append(const stick::String & _path, T _val, char _separator = '.')
         {
+            return append(_path, _val, detail::deduceHint<std::remove_cv<T>::type>(), _separator);
+        }
+
+        template<class T>
+        Shrub & append(const stick::String & _path, T _val, ValueHint _hint, char _separator = '.')
+        {
             auto it = ensureTree(_path, _separator);
-            it->m_children.append(Shrub(stick::String("", m_children.allocator()), stick::toString(_val, m_children.allocator()), ValueHint::None, m_children.allocator()));
+            it->m_children.append(Shrub(stick::String("", m_children.allocator()), stick::toString(_val, m_children.allocator()), _hint, m_children.allocator()));
             return *this;
         }
 

@@ -72,6 +72,7 @@ namespace scrub
     {
         auto it = ensureTree(_path, _separator);
         it->m_value = _val;
+        it->m_valueHint = ValueHint::JSONString;
         return *this;
     }
 
@@ -256,7 +257,12 @@ namespace scrub
 
     ShrubResult loadXML(const URI & _path, Allocator & _alloc)
     {
-
+        auto result = loadTextFile(_path, _alloc);
+        if (result)
+        {
+            return parseXML(result.data(), _alloc);
+        }
+        return result.error();
     }
 
     TextResult exportXML(const Shrub & _shrub, bool _bPrettify)
