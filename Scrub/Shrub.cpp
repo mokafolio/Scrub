@@ -68,31 +68,46 @@ namespace scrub
         return *this;
     }
 
+    /*
     Shrub & Shrub::set(const String & _path, const char * _val, char _separator)
     {
         auto it = ensureTree(_path, _separator);
         it->m_value = _val;
         it->m_valueHint = ValueHint::JSONString;
-        return *this;
+        return *it;
+    }
+
+    Shrub & Shrub::set(const stick::String & _path, const char * _val, ValueHint _hint, char _separator)
+    {
+        auto it = ensureTree(_path, _separator);
+        it->m_value = _val;
+        it->m_valueHint = _hint;
+        return *it;
     }
 
     Shrub & Shrub::append(const String & _path, const char * _val, char _separator)
     {
         auto it = ensureTree(_path, _separator);
         it->m_children.append(Shrub(String("", m_children.allocator()), String(_val, m_children.allocator()), ValueHint::None, m_children.allocator()));
-        return *this;
+        return it->m_children.last();
+    }*/
+
+    Shrub & Shrub::append(const stick::String & _path, char _separator)
+    {
+        auto it = ensureTree(_path, _separator);
+        return *it;
     }
 
     Shrub & Shrub::append(const Shrub & _child)
     {
         m_children.append(_child);
-        return *this;
+        return m_children.last();
     }
 
     Shrub & Shrub::append(Shrub && _child)
     {
         m_children.append(move(_child));
-        return *this;
+        return m_children.last();
     }
 
     const Shrub * Shrub::resolvePath(const String & _path, char _separator) const

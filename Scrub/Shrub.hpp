@@ -83,6 +83,22 @@ namespace scrub
         }
 
         template<class T>
+        inline stick::String toString(T _val, stick::Allocator & _alloc)
+        {
+            return stick::toString(_val, _alloc);
+        }
+
+        inline stick::String toString(const stick::String & _str, stick::Allocator & _alloc)
+        {
+            return _str;
+        }
+
+        inline stick::String toString(const char * _str, stick::Allocator & _alloc)
+        {
+            return stick::String(_str, _alloc);
+        }
+
+        template<class T>
         inline ValueHint deduceHint()
         {
             return ValueHint::None;
@@ -181,7 +197,7 @@ namespace scrub
         stick::Maybe<const Shrub &> child(const stick::String & _path, char _separator = '.') const;
 
         template<class T>
-        stick::Maybe<T> get(const stick::String & _path, char _separator = '.') const
+        stick::Maybe<T> maybe(const stick::String & _path, char _separator = '.') const
         {
             const Shrub * desc = resolvePath(_path, _separator);
             if (desc)
@@ -190,12 +206,18 @@ namespace scrub
         }
 
         template<class T>
-        T get(const stick::String & _path, T _orValue) const
+        T maybe(const stick::String & _path, T _orValue) const
         {
-            auto maybe = get<T>(_path);
-            if (maybe)
-                return *maybe;
+            auto m = maybe<T>(_path);
+            if (m)
+                return *m;
             return _orValue;
+        }
+
+        template<class T>
+        T get(const stick::String & _path, char _separator = '.') const
+        {
+            return maybe<T>(_path, _separator).value();
         }
 
         Shrub & setName(const stick::String & _name);
@@ -207,19 +229,23 @@ namespace scrub
         template<class T>
         Shrub & set(const stick::String & _path, T _val, char _separator = '.')
         {
-            return set(_path, _val, detail::deduceHint<std::remove_cv<T>::type>(), _separator);
+            return set(_path, _val, detail::deduceHint<typename std::remove_cv<T>::type>(), _separator);
         }
 
         template<class T>
         Shrub & set(const stick::String & _path, T _val, ValueHint _hint, char _separator = '.')
         {
             auto it = ensureTree(_path, _separator);
-            it->m_value = stick::toString(_val, m_children.allocator());
+            it->m_value = detail::toString(_val, m_children.allocator());
             it->m_valueHint = _hint;
-            return *this;
+            return *it;
         }
 
-        Shrub & set(const stick::String & _path, const char * _val, char _separator = '.');
+        /*Shrub & set(const stick::String & _path, const char * _val, char _separator = '.');
+
+        Shrub & set(const stick::String & _path, const char * _val, ValueHint _hint, char _separator = '.');*/
+
+        Shrub & append(const stick::String & _path, char _separator = '.');
 
         template<class T>
         Shrub & append(const stick::String & _path, T _val, char _separator = '.')
@@ -231,11 +257,11 @@ namespace scrub
         Shrub & append(const stick::String & _path, T _val, ValueHint _hint, char _separator = '.')
         {
             auto it = ensureTree(_path, _separator);
-            it->m_children.append(Shrub(stick::String("", m_children.allocator()), stick::toString(_val, m_children.allocator()), _hint, m_children.allocator()));
-            return *this;
+            it->m_children.append(Shrub(stick::String("", m_children.allocator()), detail::toString(_val, m_children.allocator()), _hint, m_children.allocator()));
+            return it->m_children.last();
         }
 
-        Shrub & append(const stick::String & _path, const char * _val, char _separator = '.');
+        //Shrub & append(const stick::String & _path, const char * _val, char _separator = '.');
 
         Shrub & append(const Shrub & _child);
 
@@ -290,16 +316,14 @@ namespace scrub
 
     STICK_RESULT_HOLDER(ShrubResultHolder, shrub);
     typedef stick::Result<Shrub, ShrubResultHolder> ShrubResult;
-    STICK_RESULT_HOLDER(TextResultHolder, text);
-    typedef stick::Result<stick::String, TextResultHolder> TextResult;
 
     STICK_API ShrubResult parseJSON(const stick::String & _json, stick::Allocator & _alloc = stick::defaultAllocator());
     STICK_API ShrubResult loadJSON(const stick::URI & _path, stick::Allocator & _alloc = stick::defaultAllocator());
-    STICK_API TextResult exportJSON(const Shrub & _shrub, bool _bPrettify = false);
+    STICK_API stick::TextResult exportJSON(const Shrub & _shrub, bool _bPrettify = false);
 
     STICK_API ShrubResult parseXML(const stick::String & _xml, stick::Allocator & _alloc = stick::defaultAllocator());
     STICK_API ShrubResult loadXML(const stick::URI & _path, stick::Allocator & _alloc = stick::defaultAllocator());
-    STICK_API TextResult exportXML(const Shrub & _shrub, bool _bPrettify = false);
+    STICK_API stick::TextResult exportXML(const Shrub & _shrub, bool _bPrettify = false);
 }
 
 #endif //SCRUB_SHRUB_HPP

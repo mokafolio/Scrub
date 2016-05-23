@@ -9,10 +9,10 @@ const Suite spec[] =
     SUITE("Basic Tests")
     {
         Shrub s;
-        s.set("a", "eins");
+        s.set("a", String("eins"));
         s.set("a.b", "zwei");
-        auto a = s.get<const String &>("a").ensure();
-        auto b = s.get<const String &>("a.b").ensure();
+        auto a = s.maybe<const String &>("a").ensure();
+        auto b = s.maybe<const String &>("a.b").ensure();
         EXPECT(a == "eins");
         EXPECT(b == "zwei");
         EXPECT(s.child("a").ensure().value() == "eins");
@@ -67,9 +67,9 @@ const Suite spec[] =
             ++i;
         }
         EXPECT(tree.child("indent").ensure().count() == 2);
-        EXPECT(tree.get<Int32>("indent.length").ensure() == 3);
+        EXPECT(tree.maybe<Int32>("indent.length").ensure() == 3);
         EXPECT(tree.child("indent.length").ensure().valueHint() == ValueHint::JSONInt);
-        EXPECT(tree.get<bool>("indent.use_space").ensure() == true);
+        EXPECT(tree.maybe<bool>("indent.use_space").ensure() == true);
         auto failTreeResult = parseJSON(failJSON);
         EXPECT(failTreeResult == false);
         EXPECT(failTreeResult.error() == ec::ParseFailed);
@@ -92,8 +92,7 @@ const Suite spec[] =
 
         Shrub tree = parseXML(testXML).ensure();
         EXPECT(tree.count() == 4);
-        //EXPECT(tree.get<Float32>("version").ensure() == 1.3f);
-        EXPECT(tree.get<const String &>("filename").ensure() == "debug.log");
+        EXPECT(tree.maybe<const String &>("filename").ensure() == "debug.log");
         EXPECT(tree.child("filename").ensure().count() == 0);
         EXPECT(tree.child("modules").ensure().count() == 3);
         String expected[3] = {"Finance", "Admin", "HR"};
@@ -103,7 +102,7 @@ const Suite spec[] =
             EXPECT(child.value() == expected[i]);
             ++i;
         }
-        EXPECT(tree.get<Int32>("level").ensure() == 2);
+        EXPECT(tree.get<Int32>("level") == 2);
 
         auto broken = parseXML(invalidXML);
         EXPECT(broken == false);
