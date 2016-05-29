@@ -17,7 +17,7 @@
 namespace scrub
 {
     //hints for serializing
-    enum class STICK_API ValueHint
+    STICK_API_ENUM_CLASS(ValueHint)
     {
         None,
         JSONInt,

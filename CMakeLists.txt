@@ -4,7 +4,7 @@ set(CMAKE_CXX_FLAGS "-std=c++11 -fno-exceptions")
 include_directories (${CMAKE_CURRENT_SOURCE_DIR} /usr/local/include ${CMAKE_INSTALL_PREFIX}/include)
 link_directories(/usr/local/lib)
 
-set (SCRUBDEPS Stick)
+set (SCRUBDEPS Stick pthread)
 
 set (SCRUBINC 
 Scrub/Shrub.hpp

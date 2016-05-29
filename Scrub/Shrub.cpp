@@ -106,7 +106,7 @@ namespace scrub
 
     Shrub & Shrub::append(Shrub && _child)
     {
-        m_children.append(move(_child));
+        m_children.append(std::move(_child));
         return m_children.last();
     }
 

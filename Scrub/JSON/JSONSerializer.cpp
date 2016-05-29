@@ -63,7 +63,7 @@ namespace scrub
                     parseJSONNode("", _node.get_array_element(i), child);
                 }
             }
-            _treeNode.append(move(child));
+            _treeNode.append(std::move(child));
         }
 
         static void parseJSONObject(const sajson::value & _node, Shrub & _treeNode)
