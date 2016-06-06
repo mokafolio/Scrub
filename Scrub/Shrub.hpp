@@ -314,8 +314,7 @@ namespace scrub
         ChildArray m_children;
     };
 
-    STICK_RESULT_HOLDER(ShrubResultHolder, shrub);
-    typedef stick::Result<Shrub, ShrubResultHolder> ShrubResult;
+    typedef stick::Result<Shrub> ShrubResult;
 
     STICK_API ShrubResult parseJSON(const stick::String & _json, stick::Allocator & _alloc = stick::defaultAllocator());
     STICK_API ShrubResult loadJSON(const stick::URI & _path, stick::Allocator & _alloc = stick::defaultAllocator());

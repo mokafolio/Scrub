@@ -255,7 +255,7 @@ namespace scrub
         auto result = loadTextFile(_path, _alloc);
         if (result)
         {
-            return parseJSON(result.data(), _alloc);
+            return parseJSON(result.get(), _alloc);
         }
         return result.error();
     }
@@ -275,7 +275,7 @@ namespace scrub
         auto result = loadTextFile(_path, _alloc);
         if (result)
         {
-            return parseXML(result.data(), _alloc);
+            return parseXML(result.get(), _alloc);
         }
         return result.error();
     }
