@@ -94,8 +94,13 @@ namespace scrub
 
     Shrub & Shrub::append(const stick::String & _path, char _separator)
     {
-        auto it = ensureTree(_path, _separator);
-        return *it;
+        return appendSibling(_path, _separator);
+    }
+
+    Shrub & Shrub::append(const stick::String & _path, const Shrub & _node, char _separator)
+    {
+        Shrub & sibling = appendSibling(_path, _separator);
+        return sibling.append(_node);
     }
 
     Shrub & Shrub::append(const Shrub & _child)
@@ -157,6 +162,20 @@ namespace scrub
             segment++;
         }
         STICK_ASSERT(false);
+    }
+
+    Shrub & Shrub::appendSibling(const String & _path, char _separator)
+    {
+        auto idx = _path.rfindIndex(_separator);
+        if(idx != String::InvalidIndex)
+        {
+            auto it = ensureTree(_path.sub(0, idx), _separator);
+            return (*it).append(Shrub(_path.sub(idx + 1)));
+        }
+        else
+        {
+            return append(Shrub(_path));
+        }
     }
 
     Shrub::ChildConstIter Shrub::findByName(const String & _name) const

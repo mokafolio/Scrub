@@ -241,10 +241,6 @@ namespace scrub
             return *it;
         }
 
-        /*Shrub & set(const stick::String & _path, const char * _val, char _separator = '.');
-
-        Shrub & set(const stick::String & _path, const char * _val, ValueHint _hint, char _separator = '.');*/
-
         Shrub & append(const stick::String & _path, char _separator = '.');
 
         template<class T>
@@ -261,7 +257,7 @@ namespace scrub
             return it->m_children.last();
         }
 
-        //Shrub & append(const stick::String & _path, const char * _val, char _separator = '.');
+        Shrub & append(const stick::String & _path, const Shrub & _node, char _separator = '.');
 
         Shrub & append(const Shrub & _child);
 
@@ -302,6 +298,8 @@ namespace scrub
         const Shrub * resolvePath(const stick::String & _path, char _separator) const;
 
         ChildIter ensureTree(const stick::String & _path, char _separator);
+
+        Shrub & appendSibling(const stick::String & _path, char _separator);
 
         ChildConstIter findByName(const stick::String & _name) const;
 
