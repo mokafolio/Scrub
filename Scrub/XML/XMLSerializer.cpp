@@ -54,7 +54,6 @@ namespace scrub
         {
             pugi::xml_node child = _parent.append_child();
 
-            printf("NAME: %s\n", _shrub.name().cString());
             if (_shrub.name().length())
             {
                 child.set_name(_shrub.name().cString());
@@ -75,7 +74,6 @@ namespace scrub
             }
             for (const auto & c : _shrub)
             {
-                printf("CHILD IN SHRUB!!!\n");
                 if (c.valueHint() == ValueHint::XMLAttribute)
                 {
                     child.append_attribute(c.name().cString()) = c.value().cString();
