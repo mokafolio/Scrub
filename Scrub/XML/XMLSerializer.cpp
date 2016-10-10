@@ -18,7 +18,7 @@ namespace scrub
 
             for (pugi::xml_node xmlchild = _node.first_child(); xmlchild; xmlchild = xmlchild.next_sibling())
             {
-                if (xmlchild.type() == pugi::node_element || (xmlchild.type() == pugi::node_pcdata && _shrub.value().length()))
+                if (xmlchild.type() == pugi::node_element || (xmlchild.type() == pugi::node_pcdata && _shrub.valueString().length()))
                 {
                     Shrub child(_alloc);
                     parseXMLNode(xmlchild, child, _alloc);
@@ -67,16 +67,16 @@ namespace scrub
                 child.set_name("");
             }
 
-            if (_shrub.value().length())
+            if (_shrub.valueString().length())
             {
                 pugi::xml_node txt = child.append_child(pugi::node_pcdata);
-                txt.set_value(_shrub.value().cString());
+                txt.set_value(_shrub.valueString().cString());
             }
             for (const auto & c : _shrub)
             {
                 if (c.valueHint() == ValueHint::XMLAttribute)
                 {
-                    child.append_attribute(c.name().cString()) = c.value().cString();
+                    child.append_attribute(c.name().cString()) = c.valueString().cString();
                 }
                 else
                 {

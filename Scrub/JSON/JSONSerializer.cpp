@@ -172,16 +172,16 @@ namespace scrub
                 if (_child.valueHint() == ValueHint::None || _child.valueHint() == ValueHint::JSONString)
                 {
                     if (!_bIsPartOfArray)
-                        _out.append(AppendVariadicFlag(), "\"", _child.name(), "\" : \"", _child.value(), "\"");
+                        _out.append(AppendVariadicFlag(), "\"", _child.name(), "\" : \"", _child.valueString(), "\"");
                     else
-                        _out.append(AppendVariadicFlag(), "\"", _child.value(), "\"");
+                        _out.append(AppendVariadicFlag(), "\"", _child.valueString(), "\"");
                 }
                 else
                 {
                     if (!_bIsPartOfArray)
-                        _out.append(AppendVariadicFlag(), "\"", _child.name(), "\" : ", _child.value());
+                        _out.append(AppendVariadicFlag(), "\"", _child.name(), "\" : ", _child.valueString());
                     else
-                        _out.append(_child.value());
+                        _out.append(_child.valueString());
                 }
                 if (!_bIsLastChild)
                     _out.append(",");

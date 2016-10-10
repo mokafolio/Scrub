@@ -196,6 +196,21 @@ namespace scrub
 
         stick::Maybe<const Shrub &> child(const stick::String & _path, char _separator = '.') const;
 
+        template<class C>
+        stick::Maybe<Shrub &> find(C _condition)
+        {
+            if(_condition(*this))
+                return *this;
+
+            for(auto & child : m_children)
+            {
+                auto maybe = child.find(_condition);
+                if(maybe) return maybe;
+            }
+
+            return stick::Maybe<Shrub &>();
+        }
+
         template<class T>
         stick::Maybe<T> maybe(const stick::String & _path, char _separator = '.') const
         {
@@ -263,7 +278,14 @@ namespace scrub
 
         Shrub & append(Shrub && _child);
 
-        const stick::String & value() const;
+
+        template<class T>
+        T value() const
+        {
+            return detail::convert<T>(m_value);
+        }
+
+        const stick::String & valueString() const;
 
         const stick::String & name() const;
 
@@ -292,6 +314,7 @@ namespace scrub
         stick::Allocator & allocator();
 
         const stick::Allocator & allocator() const;
+
 
     private:
 

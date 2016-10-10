@@ -15,8 +15,8 @@ const Suite spec[] =
         auto b = s.maybe<const String &>("a.b").ensure();
         EXPECT(a == "eins");
         EXPECT(b == "zwei");
-        EXPECT(s.child("a").ensure().value() == "eins");
-        EXPECT(s.child("a").ensure().child("b").ensure().value() == "zwei");
+        EXPECT(s.child("a").ensure().valueString() == "eins");
+        EXPECT(s.child("a").ensure().child("b").ensure().valueString() == "zwei");
         s.set("c", "drei");
         s.append(Shrub("e", "fünf"));
         s.append(Shrub("d", "vier"));
@@ -26,7 +26,7 @@ const Suite spec[] =
         Size i = 0;
         for (const auto & child : s)
         {
-            EXPECT(child.value() == expectedOrder[i]);
+            EXPECT(child.valueString() == expectedOrder[i]);
             ++i;
         }
         s.sort();
@@ -34,9 +34,17 @@ const Suite spec[] =
         i = 0;
         for (const auto & child : s)
         {
-            EXPECT(child.value() == expectedOrder2[i]);
+            EXPECT(child.valueString() == expectedOrder2[i]);
             ++i;
         }
+
+        //test find
+        auto maybe = s.find([](const Shrub & _s) { return _s.name() == "not" && _s.valueString() == "found";});
+        EXPECT(!maybe);
+        auto maybe2 = s.find([](const Shrub & _s) { return _s.name() == "b" && _s.valueString() == "zwei";});
+        EXPECT(maybe2);
+        EXPECT((*maybe2).name() == "b");
+        EXPECT((*maybe2).valueString() == "zwei");
     },
     SUITE("Parse JSON Tests")
     {
@@ -55,7 +63,7 @@ const Suite spec[] =
 
         Shrub tree = parseJSON(testJSON).ensure();
         EXPECT(tree.count() == 3);
-        EXPECT(tree.child("encoding").ensure().value() == "UTF-8");
+        EXPECT(tree.child("encoding").ensure().valueString() == "UTF-8");
         EXPECT(tree.child("encoding").ensure().valueHint() == ValueHint::JSONString);
         EXPECT(tree.child("plug-ins").ensure().count() == 3);
         EXPECT(tree.child("plug-ins").ensure().valueHint() == ValueHint::JSONArray);
@@ -63,7 +71,7 @@ const Suite spec[] =
         Size i = 0;
         for (const auto & child : tree.child("plug-ins").ensure())
         {
-            EXPECT(child.value() == expected[i]);
+            EXPECT(child.valueString() == expected[i]);
             ++i;
         }
         EXPECT(tree.child("indent").ensure().count() == 2);
@@ -99,7 +107,7 @@ const Suite spec[] =
         Size i = 0;
         for(const auto & child : tree.child("modules").ensure())
         {
-            EXPECT(child.value() == expected[i]);
+            EXPECT(child.valueString() == expected[i]);
             ++i;
         }
         EXPECT(tree.get<Int32>("level") == 2);

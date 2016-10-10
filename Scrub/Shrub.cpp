@@ -188,7 +188,7 @@ namespace scrub
         return findIf(m_children.begin(), m_children.end(), [this, _name](const Shrub & _child) { return _child.m_name == _name; });
     }
 
-    const String & Shrub::value() const
+    const String & Shrub::valueString() const
     {
         return m_value;
     }
