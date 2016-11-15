@@ -211,6 +211,21 @@ namespace scrub
             return stick::Maybe<Shrub &>();
         }
 
+        template<class C>
+        stick::Maybe<const Shrub &> find(C _condition) const
+        {
+            if(_condition(*this))
+                return *this;
+
+            for(auto & child : m_children)
+            {
+                auto maybe = child.find(_condition);
+                if(maybe) return maybe;
+            }
+
+            return stick::Maybe<const Shrub &>();
+        }
+
         template<class T>
         stick::Maybe<T> maybe(const stick::String & _path, char _separator = '.') const
         {
