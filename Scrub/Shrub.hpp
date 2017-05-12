@@ -32,57 +32,6 @@ namespace scrub
     namespace detail
     {
         template<class T>
-        inline T convert(const stick::String & _str);
-
-        template<>
-        inline const stick::String & convert<const stick::String &>(const stick::String & _str)
-        {
-            return _str;
-        }
-
-        template<>
-        inline bool convert<bool>(const stick::String & _str)
-        {
-            return _str == "true";
-        }
-
-        template<>
-        inline stick::Float32 convert<stick::Float32>(const stick::String & _str)
-        {
-            return stick::toFloat32(_str);
-        }
-
-        template<>
-        inline stick::Float64 convert<stick::Float64>(const stick::String & _str)
-        {
-            return stick::toFloat64(_str);
-        }
-
-        template<>
-        inline stick::Int32 convert<stick::Int32>(const stick::String & _str)
-        {
-            return stick::toInt32(_str);
-        }
-
-        template<>
-        inline stick::UInt32 convert<stick::UInt32>(const stick::String & _str)
-        {
-            return stick::toUInt32(_str);
-        }
-
-        template<>
-        inline stick::Int64 convert<stick::Int64>(const stick::String & _str)
-        {
-            return stick::toInt64(_str);
-        }
-
-        template<>
-        inline stick::UInt64 convert<stick::UInt64>(const stick::String & _str)
-        {
-            return stick::toUInt64(_str);
-        }
-
-        template<class T>
         inline stick::String toString(T _val, stick::Allocator & _alloc)
         {
             return stick::toString(_val, _alloc);
@@ -224,7 +173,7 @@ namespace scrub
         {
             const Shrub * desc = resolvePath(_path, _separator);
             if (desc)
-                return detail::convert<T>(desc->m_value);
+                return stick::detail::convert<T>(desc->m_value);
             return stick::Maybe<T>();
         }
 
@@ -290,7 +239,7 @@ namespace scrub
         template<class T>
         T value() const
         {
-            return detail::convert<T>(m_value);
+            return stick::detail::convert<T>(m_value);
         }
 
         const stick::String & valueString() const;
