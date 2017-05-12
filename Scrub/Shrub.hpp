@@ -137,6 +137,7 @@ namespace scrub
 
         Shrub(const stick::String & _name, const stick::String & _value, ValueHint _hint = ValueHint::None, stick::Allocator & _allocator = stick::defaultAllocator());
 
+        //@TODO: What about these?, Moka 05/12/2017
         /*Shrub(const Shrub & _other);
 
         Shrub(Shrub && _other);*/
