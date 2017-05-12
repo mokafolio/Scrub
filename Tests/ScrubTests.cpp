@@ -45,6 +45,8 @@ const Suite spec[] =
         EXPECT(maybe2);
         EXPECT((*maybe2).name() == "b");
         EXPECT((*maybe2).valueString() == "zwei");
+
+        //copy test @TODO
     },
     SUITE("Parse JSON Tests")
     {
