@@ -296,11 +296,11 @@ namespace scrub
     typedef stick::Result<Shrub> ShrubResult;
 
     STICK_API ShrubResult parseJSON(const stick::String & _json, stick::Allocator & _alloc = stick::defaultAllocator());
-    STICK_API ShrubResult loadJSON(const stick::URI & _path, stick::Allocator & _alloc = stick::defaultAllocator());
+    STICK_API ShrubResult loadJSON(const stick::String & _path, stick::Allocator & _alloc = stick::defaultAllocator());
     STICK_API stick::TextResult exportJSON(const Shrub & _shrub, bool _bPrettify = false);
 
     STICK_API ShrubResult parseXML(const stick::String & _xml, stick::Allocator & _alloc = stick::defaultAllocator());
-    STICK_API ShrubResult loadXML(const stick::URI & _path, stick::Allocator & _alloc = stick::defaultAllocator());
+    STICK_API ShrubResult loadXML(const stick::String & _path, stick::Allocator & _alloc = stick::defaultAllocator());
     STICK_API stick::TextResult exportXML(const Shrub & _shrub, bool _bPrettify = false);
 }
 

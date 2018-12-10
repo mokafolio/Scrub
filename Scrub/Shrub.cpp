@@ -269,7 +269,7 @@ namespace scrub
         return json::parseJSON(_json, _alloc);
     }
 
-    ShrubResult loadJSON(const URI & _path, Allocator & _alloc)
+    ShrubResult loadJSON(const String & _path, Allocator & _alloc)
     {
         auto result = loadTextFile(_path, _alloc);
         if (result)
@@ -289,7 +289,7 @@ namespace scrub
         return xml::parseXML(_xml, _alloc);
     }
 
-    ShrubResult loadXML(const URI & _path, Allocator & _alloc)
+    ShrubResult loadXML(const String & _path, Allocator & _alloc)
     {
         auto result = loadTextFile(_path, _alloc);
         if (result)
